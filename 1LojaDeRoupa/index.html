@@ -1896,7 +1896,10 @@
         e.preventDefault();
         const name=$('#register-name').value.trim(), email=$('#register-email').value.trim().toLowerCase(), phone=$('#register-phone').value.trim(), password=$('#register-password').value;
         const users=readUsers();
+        const normalizedPhone = phone.replace(/\D/g, '');
+        const phoneAlreadyUsed = normalizedPhone && users.some(u => String(u.phone || '').replace(/\D/g, '') === normalizedPhone);
         if (email === ADMIN_EMAIL || users.some(u=>u.email===email)) { $('#register-message').textContent='Este e-mail já está cadastrado.'; return; }
+        if (phoneAlreadyUsed) { $('#register-message').textContent='Este telefone já está cadastrado.'; return; }
         users.push({id:'user-'+Date.now(),name,email,phone,password,role:'customer',createdAt:new Date().toLocaleDateString('pt-BR')});
         writeUsers(users); currentUser={name,email,role:'customer'}; refreshAccountUI(); $('#register-form').reset(); showToast('Conta criada com sucesso!');
       });
